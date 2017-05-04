@@ -8,11 +8,37 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.IO;
+using Microsoft.CodeAnalysis.FindSymbols;
+using Microsoft.CodeAnalysis.MSBuild;
 
 namespace RoslynTest
 {
     public class SyntaxAnalysisTest
     {
+        public async void TestGetVariableDefinition() {
+
+
+            const string pathToSolution = @"..\..\..\RoslynTest.sln";
+            const string projectName = "RoslynTest";
+
+            // start Roslyn workspace
+            MSBuildWorkspace workspace = MSBuildWorkspace.Create();
+
+            // open solution we want to analyze
+            Solution solution = workspace.OpenSolutionAsync(pathToSolution).Result;
+
+            Project project = solution.Projects.Where(_ => _.Name == projectName).FirstOrDefault();
+
+            Compilation compliation = project.GetCompilationAsync().Result;
+
+            List<SyntaxTree> trees = compliation.SyntaxTrees.ToList();
+
+            SemanticModel semanticModel = compliation.GetSemanticModel(trees[0]);
+
+            var symbol = await SymbolFinder.FindSymbolAtPositionAsync(semanticModel, 407, workspace);
+
+
+        }
 
         public void RunTest()
         {

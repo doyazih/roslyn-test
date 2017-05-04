@@ -10,10 +10,17 @@ namespace RoslynTest
 {
     public class SampleMicroserviceServer1
     {
-        public void GetSample1()
-        {
-            string uri = "http://www.auction.co.kr";
+        string uri = "http://www.auction.co.kr";
 
+        public void Get()
+        {
+            string result = CallApi(uri, "GET");
+
+            Console.WriteLine(result);
+        }
+
+        public string CallApi(string uri, string httpType)
+        {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
 
             request.Method = WebRequestMethods.Http.Get;
@@ -24,16 +31,7 @@ namespace RoslynTest
             StreamReader reader = new StreamReader(stream, Encoding.UTF8);
 
             string result = reader.ReadToEnd();
-
-            Console.WriteLine(result);
-        }
-
-        public void GetSample2(string[] args)
-        {
-        }
-
-        public void GetSample3(int id, string name)
-        {
+            return result;
         }
     }
 }
